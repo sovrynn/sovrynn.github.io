@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../../../global.css">
+    <link rel="stylesheet" href="../../blogpost.css">
+    <title>Poker Toy Game 2</title>
+  </head>
+  <body>
+    <header>Poker Toy Game 2</header>
+    <div id="footer-of-header">
+      <span>By Henry J (November 25, 2022)</span>
+      <a href="../../../pages/fun/fun.html">back</a>
+    </div>
+    <main>
+      <p>
+        I want to understand another toy game that is very similar to the
+        first toy game I studied. Except, the “bluffs” don’t have 0.6% equity;
+        instead, they have 16% equity.
+      </p>
+      <p>
+        Here are the parameters:
+      </p>
+      <ul>
+        <li>
+          OOP: AA, A2o, A3o
+        </li>
+        <li>
+          IP: KK
+        </li>
+        <li>
+          Pot: 50
+        </li>
+        <li>
+          Stacks: 950
+        </li>
+        <li>
+          Flop: 888 rainbow
+        </li>
+      </ul>
+      <p>
+        Also, there are no bets allowed on the turn and river. Betting and
+        raising is only allowed on the flop. So in some ways it’s a lot
+        simpler than the first toy game.
+      </p>
+      <p>
+        Here are the preflop ranges:
+      </p>
+      <section>
+        <img src="img/OOP preflop.png" alt="OOP preflop">
+        <p>
+          OOP preflop
+        </p>
+      </section>
+      <section>
+        <img src="img/IP preflop.png" alt="IP preflop">
+        <p>
+          IP preflop
+        </p>
+      </section>
+      <h1>
+        Subtree 1 (OOP Bet) Overview
+      </h1>
+      <p>
+        Here’s the OOP strategy on the flop:
+      </p>
+      <section>
+        <img src="img/OOP strategy.png" alt="OOP strategy">
+        <p>
+          OOP strategy
+        </p>
+      </section>
+      <p>
+        Here’s the IP strategy facing a bet:
+      </p>
+      <section>
+        <img src="img/IP facing bet.png" alt="IP facing bet">
+        <p>
+          IP facing bet
+        </p>
+      </section>
+      <p>
+        Most of this seems pretty similar to last time - OOP bets with a range
+        that makes KK indifferent to calling or folding. But I want to dig
+        into the details because there are some interesting things I want to
+        point out here.
+      </p>
+      <h1>
+        Subtree 1: Simpler way of thinking about a polarized betting range
+        that makes KK indifferent to a call or fold
+      </h1>
+      <p>
+        How do we figure out the right ratio of nuts and air to make KK
+        indifferent to calling or folding? Before, I used to calculate this by
+        starting from a range that consists of pure nuts and pure bluffs (nuts
+        have 100% equity, bluffs have 0% equity). And from there, calculating
+        the right ratio to make KK indifferent to calling or folding, based on
+        the bet size relative to the pot size. But then, we need to make
+        another adjustment, to factor in the equities, because nuts and bluffs
+        typically don’t have 100% and 0% equity.
+      </p>
+      <p>
+        Instead of doing all that, what if we just consider the equity of the
+        entire range as a whole?
+      </p>
+      <p>
+        Against a pot-sized bet, KK need to be good ⅓ of the time to make a
+        break-even call (and be indifferent to calling or folding). So instead
+        of getting all fancy and breaking down bluff ratios and then factoring
+        in equity, we can just say that KK should have 33% equity against a
+        balanced polarized betting range that is betting 1x pot. And indeed,
+        we see that this is exactly true:
+      </p>
+      <section>
+        <img src="img/Equity KK facing flop bet.png" alt="Equity KK facing flop bet">
+        <p>
+          Equity KK facing flop bet
+        </p>
+      </section>
+      <h1>
+        Subtree 1: How to figure out the GTO call/fold mixing frequency for KK
+        facing a flop bet
+      </h1>
+      <p>
+        In our first toy game, facing a polarized betting range of AA and
+        offsuit trash, KK mixed at approximately 50%. We figured out the
+        reason for this was because:
+      </p>
+      <ul>
+        <li>
+          If KK folded more than 50%, OOP could bluff all offsuit trash
+          profitably
+        </li>
+        <li>
+          If KK folded less than 50%, OOP would never bluff offsuit trash on
+          that street
+        </li>
+      </ul>
+      <p>
+        So KK mixed at the right frequency to make bluffs indifferent to
+        bluffing or check-folding.
+      </p>
+      <p>
+        In this toy game, the right mixing frequency seems to be different:
+      </p>
+      <section>
+        <img src="img/KK mixing frequency against bet.png" alt="KK mixing frequency against bet">
+        <p>
+          KK mixing frequency against bet
+        </p>
+      </section>
+      <p>
+        Incorporating the fact that A2o has ~16.4% equity against KK, we can
+        create a formula for the EV when A2o bluffs KK, where:
+      </p>
+      <ul>
+        <li>
+          X is the frequency with which KK folds
+        </li>
+        <li>
+          1-X is the frequency with which KK calls
+        </li>
+      </ul>
+      <p>
+        The formula is:
+      </p>
+      <ul>
+        <li>
+          A2o bluff EV = X(50) + (1-X)(0.16)(100) + (1-X)(0.84)(-50)
+        </li>
+      </ul>
+      <p>
+        If we solve this for an EV of 0, KK should fold 34% of the time.
+        However, in the sim, A2o is actually indifferent to bluffing when its
+        EV is the same as a check, not a fold. And the EV on a check is 3.8:
+      </p>
+      <section>
+        <img src="img/OOP EV Ax.png" alt="OOP EV Ax">
+        <p>
+          OOP EV Ax
+        </p>
+      </section>
+      <p>
+        So if we solve the A2o bluff EV expression for 3.8, we get a folding
+        frequency of 39%. Which is indeed the frequency with which KK folds:
+      </p>
+      <section>
+        <img src="img/KK mixing frequency against bet.png" alt="KK mixing frequency against bet">
+        <p>
+          KK mixing frequency against bet
+        </p>
+      </section>
+      <p>
+        Theoretically, if KK fold greater than 39%, A2o should have higher EV
+        on a bet over a check, and should always bet. So I tried node locking
+        KK folding against a bet to 40%, and in response, A2o is indeed always
+        betting:
+      </p>
+      <section>
+        <img src="img/OOP adjust to KK overfold node lock.png" alt="OOP adjust to KK overfold node lock">
+        <p>
+          OOP adjust to KK overfold node lock
+        </p>
+      </section>
+      <section>
+        <img src="img/KK fold to bet node lock.png" alt="KK fold to bet node lock">
+        <p>
+          KK fold to bet node lock
+        </p>
+      </section>
+      <p>
+        If we lean the other way, and make KK overcall, then A2o has less EV
+        on a bet over a check, and should always check and never bluff. And it
+        is indeed the case (KK underfolding at 35% frequency):
+      </p>
+      <section>
+        <img src="img/OOP adjust to KK overcall node lock.png" alt="OOP adjust to KK overcall node lock">
+        <p>
+          OOP adjust to KK overcall node lock
+        </p>
+      </section>
+      <section>
+        <img src="img/KK overcall node lock.png" alt="KK overcall node lock">
+        <p>
+          KK overcall node lock
+        </p>
+      </section>
+      <p>
+        So when KK overcall, we are never bluffing with A2o/A3o. It seems this
+        also results in checking back AA a little more so we can continue to
+        realize the equity of our entire checking range (I discuss what this
+        means in the next section). And the rest of the time, AA bet to get
+        value/deny equity from KK.
+      </p>
+      <p>
+        The high-level takeaway here: even when KK is indifferent to calling
+        or folding facing a polarized balanced range, KK needs to mix at the
+        right frequency, and that frequency is based on making the bluffs
+        indifferent to bluffing when compared to their other actions. If the
+        bluffs aren’t indifferent to bluffing, they’ll either always bluff, or
+        never bluff, based on whether KK is calling too often or too
+        infrequently.
+      </p>
+      <p>
+        TODO for the future: What happens if we have multiple bluffs with
+        different amounts of equity? Does KK adjust to the weakest bluff, or
+        the average of all the bluffs?
+      </p>
+      <p>
+        Now, we can move on to the other half of the game tree, which is an
+        OOP check. What variables affect the OOP checking strategy?
+      </p>
+      <h1>
+        Subtree 2 (OOP Check) Overview
+      </h1>
+      <p>
+        Just to review, here’s the OOP strategy on the flop:
+      </p>
+      <section>
+        <img src="img/OOP strategy.png" alt="OOP strategy">
+        <p>
+          OOP strategy
+        </p>
+      </section>
+      <p>
+        And here’s the IP strategy facing an OOP check (mixing between
+        checking back and betting):
+      </p>
+      <section>
+        <img src="img/IP facing flop check.png" alt="IP facing flop check">
+        <p>
+          IP facing flop check
+        </p>
+      </section>
+      <p>
+        And here’s the OOP strategy facing an IP bet:
+      </p>
+      <section>
+        <img src="img/OOP facing IP bet.png" alt="OOP facing IP bet">
+        <p>
+          OOP facing IP bet
+        </p>
+      </section>
+      <h1>
+        Subtree 2 key concept 1: Facing an OOP check, KK are indifferent to
+        checking back or betting
+      </h1>
+      <p>
+        Since there are no more streets of betting after the flop, if KK check
+        the flop back, it goes straight to showdown. This means both players
+        just get to realize the equity of their entire ranges. In that case,
+        the EV of the two players should just be <code>equity * pot</code>.
+        And indeed, we see this is true:
+      </p>
+      <section>
+        <img src="img/KK check back equity.png" alt="KK check back equity">
+        <p>
+          KK check back equity
+        </p>
+      </section>
+      <section>
+        <img src="img/KK check back EV.png" alt="KK check back EV">
+        <p>
+          KK check back EV
+        </p>
+      </section>
+      <p>
+        Ok, so we know what’s going on when KK check back. But what about if
+        KK bet? We know that KK are indifferent to betting or checking here,
+        since it’s mixing its strategy between the two plays. Therefore, the
+        EVs of the two decisions must be the same. Let’s calculate the EV of a
+        KK bet.
+      </p>
+      <p>
+        When KK bet:
+      </p>
+      <section>
+        <img src="img/OOP facing IP bet.png" alt="OOP facing IP bet">
+        <p>
+          OOP facing IP bet
+        </p>
+      </section>
+      <section>
+        <img src="img/IP facing checkraise.png" alt="IP facing checkraise">
+        <p>
+          IP facing checkraise
+        </p>
+      </section>
+      <ul>
+        <li>
+          it is winning the pot 82% of the time
+        </li>
+        <li>
+          it is getting raised with a range that makes it indifferent to
+          calling or folding 18% of the time, making its EV 0, which
+          effectively means it has lost the entire pot, including its bet
+        </li>
+      </ul>
+      <p>
+        So KK EV on a bet is <code>0.82(pot) - 0.18(bet) = 36.5</code>. And as
+        we can see, that is the same as KK EV on a check!
+      </p>
+      <p>
+        So what’s going on here? OOP has mixed in enough AA into its checking
+        range such that the EV OOP is same whether:
+      </p>
+      <ul>
+        <li>
+          KK check back, allowing OOP to realize all its equity
+        </li>
+        <li>
+          KK bet, forcing OOP to re-polarize
+        </li>
+      </ul>
+      <p>
+        So OOP has mixed in enough AA into its checking range such that OOP
+        realizes the entire equity of its checking range, DESPITE OOP not
+        always reaching showdown with its entire checking range. It’s really a
+        very beautiful concept to see.
+      </p>
+      <p>
+        One detail is that if KK bets larger, OOP doesn’t need to check as
+        many AA to realize the equity of its checking range. This is because
+        its getting a larger reward (the KK bet) when it does polarize so it
+        doesn’t need to make a polarized raise against a KK bet as often. I
+        tried a sim where I only allowed a pot-sized bet from KK and indeed,
+        AA aren’t checking the flop as much:
+      </p>
+      <section>
+        <img src="img/KK larger bet nodelock OOP.png" alt="KK larger bet nodelock OOP">
+        <p>
+          KK larger bet nodelock OOP
+        </p>
+      </section>
+      <section>
+        <img src="img/KK larger bet nodelock.png" alt="KK larger bet nodelock">
+        <p>
+          KK larger bet nodelock
+        </p>
+      </section>
+      <section>
+        <img src="img/KK larger bet nodelock OOP facing bet.png" alt="KK larger bet nodelock OOP facing bet">
+        <p>
+          KK larger bet nodelock OOP facing bet
+        </p>
+      </section>
+      <h1>
+        Subtree 2 key concept 2: If KK are indifferent to checking back or
+        betting after OOP checks, how does GTO decide the optimal frequency to
+        mix at?
+      </h1>
+      <p>
+        I think in order to answer this question, we need to think from the
+        perspective of AA. We know the EV of AA when betting - it’s actually
+        higher than the pot:
+      </p>
+      <section>
+        <img src="img/AA EV on a bet.png" alt="AA EV on a bet">
+        <p>
+          AA EV on a bet
+        </p>
+      </section>
+      <p>
+        The reason for this is when OOP polarizes and makes KK indifferent to
+        calling or folding, KK EV is 0, BUT, KK has to defend some-time to
+        keep our bluffs indifferent to bluffing. So when KK defends at this
+        breakeven frequency, AA makes more money than the pot (on average,
+        because KK does have some equity against AA) whenever KK calls.
+      </p>
+      <p>
+        When AA slowplay, KK have to bet at the right frequency to make AA
+        indifferent to betting the flop or slowplaying. If KK bets too often,
+        AA will always slowplay, because the EV of slowplaying will be higher
+        than betting the flop. If KK bets too infrequently, AA will never
+        slowplay, because the EV of betting the flop (fastplaying?) will be
+        higher. Of course, we must verify.
+      </p>
+      <p>
+        Normally KK bet 54% of the time when checked to. If we nodelock to 55%
+        (betting too much), we can see AA always slowplay:
+      </p>
+      <section>
+        <img src="img/KK overbet node lock OOP.png" alt="KK overbet node lock OOP">
+        <p>
+          KK overbet node lock OOP
+        </p>
+      </section>
+      <section>
+        <img src="img/KK overbet node lock.png" alt="KK overbet node lock">
+        <p>
+          KK overbet node lock
+        </p>
+      </section>
+      <section>
+        <img src="img/KK overbet node lock OOP facing bet.png" alt="KK overbet node lock OOP facing bet">
+        <p>
+          KK overbet node lock OOP facing bet
+        </p>
+      </section>
+      <p>
+        If we nodelock to 53% (betting too little) we can see AA never
+        slowplay:
+      </p>
+      <section>
+        <img src="img/KK overcheck node lock OOP.png" alt="KK overcheck node lock OOP">
+        <p>
+          KK overcheck node lock OOP
+        </p>
+      </section>
+      <section>
+        <img src="img/KK overcheck node lock.png" alt="KK overcheck node lock">
+        <p>
+          KK overcheck node lock
+        </p>
+      </section>
+      <section>
+        <img src="img/KK overcheck node lock OOP facing bet.png" alt="KK overcheck node lock OOP facing bet">
+        <p>
+          KK overcheck node lock OOP facing bet
+        </p>
+      </section>
+      <p>
+        Finally I just want to run the math of how we calculate the proper
+        betting frequency of KK when checked to, in order to make AA
+        indifferent to slowplaying (protecting checking range) or fastplaying
+        (betting out on the flop). In order to do that, we need to come up
+        with a formula for AA’s EV on a check, and then solve it for AA’s EV
+        when betting, in order to make AA indifferent to fastplaying or
+        slowplaying.
+      </p>
+      <p>
+        If:
+      </p>
+      <ul>
+        <li>
+          X is the frequency with which KK check back after an OOP check
+        </li>
+        <li>
+          Y is the frequency with which KK folds to an OOP check-raise
+        </li>
+      </ul>
+      <p>
+        AA EV when checking is:
+      </p>
+      <p>
+        X(0.917)(50) + (1-X)(Y)(75) + (1-X)(1-Y)(125)(0.917) +
+        (1-X)(1-Y)(-75)(0.083)
+      </p>
+      <p>
+        In order to solve for X, we need to know Y. Y is the folding frequency
+        of KK facing a check-raise which makes bluffs indifferent to bluffing
+        or folding (EV = 0 both cases). In this case, it happens to be 36%:
+      </p>
+      <section>
+        <img src="img/KK facing a check raise.png" alt="KK facing a check raise">
+        <p>
+          KK facing a check raise
+        </p>
+      </section>
+      <p>
+        If we solve for this checking frequency:
+      </p>
+      <ul>
+        <li>
+          Y(75) + (1-Y)(0.164)(125) + (1-Y)(0.835)(-75) = 0
+        </li>
+        <li>
+          Y = 0.36
+        </li>
+      </ul>
+      <p>
+        So it’s right.
+      </p>
+      <p>
+        So now that we know how often KK are calling a check-raise, AA EV when
+        checking is:
+      </p>
+      <ul>
+        <li>
+          X(0.917)(50) + (1-X)(0.36)(75) + (1-X)(0.64)(125)(0.917) +
+          (1-X)(0.64)(-75)(0.083)
+        </li>
+        <li>
+          If we solve it for 73 (AA EV on betting flop), we get X = 0.46
+        </li>
+      </ul>
+      <p>
+        Which is indeed how often KK are checking back when OOP checks:
+      </p>
+      <section>
+        <img src="img/IP facing flop check.png" alt="IP facing flop check">
+        <p>
+          IP facing flop check
+        </p>
+      </section>
+      <p>
+        So it all checks out.
+      </p>
+      <h1>
+        Closing Thoughts
+      </h1>
+      <p>
+        Honestly this solve has convinced me regarding the merits of
+        exploitative play. What I mean is, there’s actually no such thing as
+        “exploitative play”. What people commonly refer to as exploitative
+        play is just GTO play against a non-GTO opponent. And what people
+        commonly refer to as GTO play is simply GTO play against a GTO
+        opponent. And if you can’t play GTO (i.e. play a profitable strategy)
+        against either of these kinds of opponents, you’re just a fish.
+      </p>
+      <p>
+        In practice, no one is ever perfectly playing GTO, or even anywhere
+        close to it. So your task should be to figure out in which direction
+        your opponent is straying from GTO and then adjust to maximally
+        exploit it. And in the spots that you do think your opponent is
+        playing close enough to GTO, you can just attempt to replicate GTO
+        yourself.
+      </p>
+      <p>
+        The thing is, people aren’t straying from GTO in only one spot.
+        They’re straying from GTO in basically every spot. So it’s basically
+        impossible to calculate the perfect strategy against a real opponent
+        because human brains don’t have the capability of solvers.
+      </p>
+      <p>
+        There’s also another dimension to strategy which is the leveling game.
+        If you can predict that your opponent will predict that you will do
+        something, you can then adjust to your opponent’s prediction and
+        exploit them. Assuming, of course, that you don’t think your opponent
+        will predict your prediction of their prediction. So it’s just like
+        waves repeatedly crashing on a shore - the energy builds up but it has
+        nowhere to go. Eventually it crashes and the cycle is reset. Only to
+        build up again. Forever and ever.
+      </p>
+      <p>
+        There’s so many more poker toy games I would love to solve (different
+        permutations of position, stack/bet sizes, ranges, flops/runouts, etc)
+        and spend countless hours poring over. The thing is, life is too
+        precious for that. Poker is just some very finite man-made game which
+        people have a silly habit of betting usually-trivial amounts of money
+        on. Poker is on its way out of this world and honestly I should be on
+        my way out from poker.
+        <a href="https://www.youtube.com/watch?v=IQsA8LACgf4">
+          Win the game, or don’t play it</a>.
+      </p>
+    </main>
+  </body>
+</html>

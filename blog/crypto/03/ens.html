@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../../../global.css">
+    <link rel="stylesheet" href="../../blogpost.css">
+    <title>ENS Overview</title>
+  </head>
+  <body>
+    <header>ENS Overview</header>
+    <div id="footer-of-header">
+      <span>By Henry J (November 26, 2022)</span>
+      <a href="../../../pages/crypto/crypto.html">back</a>
+    </div>
+    <main>
+      <p>
+        Wow. It’s been a while since I actually learned something new about
+        crypto. This is something that has been on my radar for a while -
+        Ethereum Name Service, or ENS for short. My goal in this blog post is
+        to cover it at a consumer level rather than a developer level,
+        although I do dig into the details sometimes in this blog post.
+      </p>
+      <h1>
+        DNS Refresher
+      </h1>
+      <p>
+        As a quick primer, the parallel to ENS in the web2 space is the DNS,
+        short for “Domain Name System”. Here are some quick facts about DNS:
+      </p>
+      <ul>
+        <li>
+          The DNS is a distributed system which maps and resolves domain names
+          to IP addresses.
+        </li>
+        <li>
+          Domain names are structured as a tree, with the root zone being at
+          the top, which splits into various domains (ex: .com, .edu, .org),
+          which themselves split into various subdomains (ex: amazon.com,
+          google.com)
+        </li>
+        <li>
+          There are 13 root DNS server IPs, and the various domains (ex: .com)
+          and subdomains (ex: google.com) in the domain namespace have their
+          own servers.
+        </li>
+        <li>
+          During actual domain name resolution, there is a recursive query
+          process where requests are made to DNS servers going down the DNS
+          hierarchy tree until the DNS server that can provide the actual IP
+          address is hit.
+        </li>
+      </ul>
+      <p>
+        A great resource to learn more about DNS is
+        <a href="https://www.cloudflare.com/learning/dns/what-is-dns/">
+          Cloudflare’s blog</a>.
+      </p>
+      <h1>
+        So what is ENS?
+      </h1>
+      <p>
+        ENS has some
+        <a href="https://docs.ens.domains/">
+          documentation</a> which is a great place to start to learn about
+        ENS.
+      </p>
+      <p>
+        At a very high level, the main data of ENS consists of a registry,
+        which maps domain names (ex: henry.eth) to resolvers. Resolvers are
+        responsible for actually resolving the domain name to the underlying
+        data (typically an Ethereum address). In practice, resolvers are
+        contracts that implement a certain interface. By implementing
+        different kinds of resolvers, ENS domains can be mapped to data not
+        limited to just Ethereum addresses.
+      </p>
+      <p>
+        The current contract for the ENS registry is
+        <a href="https://etherscan.io/address/0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e#code">
+          here</a>. Just some trivia - the contract has a reference to an old
+        instance of the ENS registry. They updated it because a bug was found,
+        which you can read about
+        <a href="https://docs.ens.domains/ens-migration-february-2020/technical-description">
+          here</a>.
+      </p>
+      <p>
+        Importantly, there is also a “registrar controller” for the .eth
+        domain. This is the contract that controls all the logic of paying ETH
+        to claim a .eth subdomain for a specified amount of time. You can
+        check out this contract
+        <a href="https://etherscan.io/address/0x283af0b28c62c092c9727f1ee09c02ca627eb7f5#code">
+          here</a>.
+      </p>
+      <h1>
+        Example ENS domain resolution (alice.eth)
+      </h1>
+      <p>
+        ENS uses namehash to identity domains instead of encoding the actual
+        characters. The
+        <a href="https://docs.ens.domains/frequently-asked-questions">
+          reason</a> is because “Hashes provide a fixed length identifier that
+        can easily be passed around between contracts with fixed overhead and
+        no issues passing around variable-length strings”. Apparently namehash
+        can generate a unique hash for any valid domain name so there’s no
+        worries about collisions. Although if the domain namespace is larger
+        than the namehash hash-space I’m not sure how they could guarantee
+        this.
+      </p>
+      <p>
+        Anyways, the namehash for <code>alice.eth</code> is (splitting it up
+        because it breaks mobile formatting):
+      </p>
+      <ul>
+        <li>
+          1/4: 0x787192fc5378cc32
+        </li>
+        <li>
+          2/4: aa956ddfdedbf26b
+        </li>
+        <li>
+          3/4: 24e8d78e40109add
+        </li>
+        <li>
+          4/4: 0eea2c1a012c3dec
+        </li>
+      </ul>
+      <p>
+        If we use the namehash to get the resolver for this domain from the
+        ENS registry we get:
+      </p>
+      <section>
+        <img src="img/alice.eth resolver.png" alt="alice.eth resolver">
+        <p>
+          alice.eth resolver
+        </p>
+      </section>
+      <p>
+        If we click into the resolver, we see that it’s a contract. If we call
+        the <code>addr</code> function on the resolver, we get an address
+        which should be the address for <code>alice.eth</code>:
+      </p>
+      <section>
+        <img src="img/alice.eth resolution.png" alt="alice.eth resolution">
+        <p>
+          alice.eth resolution
+        </p>
+      </section>
+      <p>
+        If we search for <code>alice.eth</code> on Etherscan to verify, we see
+        that the resulting address is indeed the right address:
+      </p>
+      <section>
+        <img src="img/alice.eth.png" alt="alice.eth">
+        <p>
+          alice.eth
+        </p>
+      </section>
+      <p>
+        Cool!
+      </p>
+      <h1>
+        Searching up opinions on the value prop / use cases of ENS
+      </h1>
+      <p>
+        I was curious to get other people’s ideas on the value prop / use
+        cases of ENS so I did a very cursory search. I found some
+        <a href="https://hackernoon.com/practical-use-cases-for-ens-domains">
+          meh articles</a> but did find a
+        <a href="https://coinyuppie.com/re-understanding-ens-valuation-not-just-domain-names-2/">
+          pretty good one</a>. The latter article lists the following
+        potential use cases/benefits of ENS:
+      </p>
+      <ul>
+        <li>
+          companies like Google can integrate their web2 domain names as web3
+          identities
+        </li>
+        <li>
+          web3 identity/SSO for laymen
+        </li>
+        <li>
+          cross-blockchain web3 identity (ex: you can use the same private
+          keys for both ETH and BTC!)
+        </li>
+        <li>
+          enhance domain name property rights because ETH is (theoretically)
+          censorship-resistant
+        </li>
+      </ul>
+      <h1>
+        My opinion on the value prop of ENS
+      </h1>
+      <p>
+        At a very basic level, the value prop of ENS stems from the fact that
+        Ethereum addresses require a lot of information to identify, and can’t
+        be communicated through image or speech easily. With ENS, it becomes
+        very easy to specify an Ethereum address over image or speech.
+      </p>
+      <p>
+        Also, it can be easy to forget, but because ENS is a smart contract
+        running on Ethereum, it (theoretically) benefits from all the
+        qualities of Ethereum - namely, being open, transparent,
+        censorship-resistant. And because it’s a smart contract, it mostly
+        removes humans, including their errors and corruption, from the
+        equation.
+      </p>
+      <p>
+        ENS also provides value because it decouples a blockchain/web3
+        identity from blockchain addresses. This is because you can change
+        your ENS subdomain resolver to resolve to a different Ethereum
+        address.
+      </p>
+      <p>
+        ENS also has a lot of use cases. The blog post I summarized in the
+        previous section gives some good use cases. But in general ENS domain
+        names have the potential to be used really, really ubiquitously. Just
+        like how most consumers don’t pass around IP addresses and only use
+        domain names, perhaps there will be a time where no one uses Ethereum
+        addresses and everyone uses ENS domain names. It will probably become
+        a standard for smart contracts to register ENS domain names so they
+        can be looked up easily, just like how any website today has a domain
+        name.
+      </p>
+      <h1>
+        ENS fees/tokenomics
+      </h1>
+      <p>
+        ENS charges fees when registering domain names in the .eth domain.
+        What are these fees used for?
+      </p>
+      <p>
+        The
+        <a href="https://docs.ens.domains/v/governance/ens-dao-constitution">
+          ENS DAO constitution</a> covers what fees are used for. Supposedly,
+        the function of fees are:
+      </p>
+      <ul>
+        <li>
+          primarily as an incentive mechanism to prevent people from being
+          able to speculatively register tons of domain names for free
+        </li>
+        <li>
+          secondarily to fund ongoing development of ENS as seen fit by the
+          DAO
+        </li>
+      </ul>
+      <p>
+        $ENS tokens are used for governance. Would $ENS token holders be
+        considered shareholders? Could $ENS holders vote to payout a portion
+        of ENS’s profits to themselves?
+      </p>
+      <h1>
+        Summary
+      </h1>
+      <p>
+        ENS is pretty cool! I don’t think it would hurt to claim a nice .eth
+        domain for yourself; you might not be able to get a comparably good
+        one if you wait until a decade later. Assuming you might want one in
+        the future, of course.
+      </p>
+      <p>
+        Till next time!
+      </p>
+    </main>
+  </body>
+</html>

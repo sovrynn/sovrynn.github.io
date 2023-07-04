@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../../../global.css">
+    <link rel="stylesheet" href="../../blogpost.css">
+    <title>Poker Toy Game 1</title>
+  </head>
+  <body>
+    <header>Poker Toy Game 1</header>
+    <div id="footer-of-header">
+      <span>By Henry J (November 21, 2022)</span>
+      <a href="../../../pages/fun/fun.html">back</a>
+    </div>
+    <main>
+      <p>
+        Toy games really help with understanding poker theory IMO.
+      </p>
+      <p>
+        This first toy game I want to cover is a range of nuts and air versus
+        a range of marginal hands (bluffcatchers):
+      </p>
+      <ul>
+        <li>
+          OOP player has AA, 54o, 53o, 52o, 43o, 42o, 32o
+        </li>
+        <li>
+          IP player has KK
+        </li>
+        <li>
+          Flop is 888 rainbow
+        </li>
+        <li>
+          Pot is 50 and stacks are 950
+        </li>
+      </ul>
+      <section>
+        <img src="img/Preflop OOP Range.png" alt="Preflop OOP Range">
+        <p>
+          Preflop OOP Range
+        </p>
+      </section>
+      <section>
+        <img src="img/Preflop IP Range.png" alt="Preflop IP Range">
+        <p>
+          Preflop IP Range
+        </p>
+      </section>
+      <p>
+        I will go over the full strategy and also some math.
+      </p>
+      <p>
+        I assume the reader knows basic poker concepts like:
+      </p>
+      <ul>
+        <li>
+          EV and equity
+        </li>
+        <li>
+          alpha value / pot odds
+        </li>
+        <li>
+          Betting with the right ratio of nutted hands and bluffs to make our
+          opponent indifferent to calling with his bluffcatchers
+        </li>
+      </ul>
+      <h1>
+        Flop High-Level Summary
+      </h1>
+      <p>
+        On the flop, we are betting with a balanced range of AA as the nuts
+        and mixing in bluffs with equal amounts from our offsuit trash. The
+        solver uses the same frequency for all the bluffs because it has no
+        preference because none of them have any blocker properties.
+      </p>
+      <p>
+        Let’s take a look at the two strategies on the flop:
+      </p>
+      <section>
+        <img src="img/Flop OOP Strategy.png" alt="Flop OOP Strategy">
+        <p>
+          Flop OOP Strategy
+        </p>
+      </section>
+      <section>
+        <img src="img/Flop KK strategy against OOP bet.png" alt="Flop KK strategy against OOP bet">
+        <p>
+          Flop KK strategy against OOP bet
+        </p>
+      </section>
+      <section>
+        <img src="img/Flop KK strategy when checked to.png" alt="Flop KK strategy when checked to">
+        <p>
+          Flop KK strategy when checked to
+        </p>
+      </section>
+      <h2>
+        Why do we use a bigger sizing on the flop? As opposed to the smaller
+        sizing?
+      </h2>
+      <p>
+        We are never using a smaller sizing. The reason for this is that by
+        using a larger sizing on the flop (and also on the turn and river),
+        the OOP player can maximize its bluff to value ratio, since larger
+        bets allow for more bluffs, and increase the number of hands with
+        which it bets with a perfectly polarized range, making the opponent
+        indifferent to calling or folding. Recall that when you do this, you
+        effectively win the pot - if your opponent is indifferent to calling
+        or folding, it means their EV is the same as folding which is just 0.
+      </p>
+      <h2>
+        Why do we mix KK as a call or fold?
+      </h2>
+      <p>
+        This is something I discuss at the end of the blog post.
+        Theoretically, it means that KK is indifferent to calling or folding
+        here and the two options have an equal EV. That being said, KK has to
+        attempt to bluffcatch while at the same time folding sometimes
+        (completely randomly) to avoid being exploitable.
+      </p>
+      <section>
+        <img src="img/Flop KK EV after OOP bet.png" alt="Flop KK EV after OOP bet">
+        <p>
+          Flop KK EV after OOP bet
+        </p>
+      </section>
+      <h2>
+        Why don’t we check AA at some frequency? No slowplay? No protecting
+        our checking range?
+      </h2>
+      <p>
+        I think the only incentive to slowplay the nuts is to protect our
+        checking range to help it realize its equity. However in this case,
+        our offsuit trash has so little equity (0.6%) that OOP basically gave
+        up on it. You can see that when checked to, KK are actually betting
+        some microscopically small percentage of the time to deny this equity.
+        I’m sure that theoretically, AA would check the flop some even more
+        microscopic percentage of the time to help the offsuit trash realize
+        its equity. However I think PIO’s floating point granularity just
+        doesn’t go that low.
+      </p>
+      <h1>
+        Why don’t KK raise facing a bet on the flop?
+      </h1>
+      <p>
+        When I first asked this question, it just seemed obvious that KK
+        wouldn’t raise against OOP’s range but I couldn’t come up with a
+        simple and intuitive answer why. Then I leveled myself into thinking
+        that the reason KK don’t raise is because OOP can just re-raise with
+        another polarized range. But after running some sims it became clear.
+        It turns out that this question is a very meta-question, and the
+        answer is very useful to understanding theory. Let’s dive in.
+      </p>
+      <p>
+        Based on my hypothesis that KK don’t raise because OOP can re-raise
+        with another polarized range, I tried running a sim where OOP could
+        only bet once, on the flop, and never raise. Which means if the reason
+        KK don’t raise is because OOP could re-raise, then when we prevent an
+        OOP raise, KK might raise. But KK never ended up raising. Raising was
+        -EV even without OOP re-raising:
+      </p>
+      <section>
+        <img src="img/KK raise test 1 - OOP strategy when only one OOP flop bet allowed.png" alt="KK raise test 1 - OOP strategy when only one OOP flop bet allowed">
+        <p>
+          KK raise test 1 - OOP strategy when only one OOP flop bet allowed
+        </p>
+      </section>
+      <section>
+        <img src="img/KK raise test 1 - IP strategy when only one OOP flop bet allowed.png" alt="KK raise test 1 - IP strategy when only one OOP flop bet allowed">
+        <p>
+          KK raise test 1 - IP strategy when only one OOP flop bet allowed
+        </p>
+      </section>
+      <p>
+        So clearly its not solely because OOP can re-raise. Then I tried
+        running a sim where I prevented OOP from re-raising, but node locked
+        OOP to always bet its entire range. The goal was to make OOP’s betting
+        range have more bluffs. KK never raised, BUT its EV on a raise went up
+        significantly.
+      </p>
+      <section>
+        <img src="img/KK raise test 2 - OOP strategy always bet node lock.png" alt="KK raise test 2 - OOP strategy always bet node lock">
+        <p>
+          KK raise test 2 - OOP strategy always bet node lock
+        </p>
+      </section>
+      <section>
+        <img src="img/KK raise test 2 - IP strategy when OOP always bet node lock.png" alt="KK raise test 2 - IP strategy when OOP always bet node lock">
+        <p>
+          KK raise test 2 - IP strategy when OOP always bet node lock
+        </p>
+      </section>
+      <p>
+        So I tried running a sim where I added 2 more offsuit trash hands
+        (62o, 63o) to the OOP range and made them always bet. KK still never
+        raised.
+      </p>
+      <p>
+        I thought this might be because offsuit trash doesn’t have much equity
+        against KK so we might need to add in bluffs with more equity before
+        KK wants to raise. So I added a bunch of suited Ax’s, which have
+        significantly more equity against KK than offsuit trash, and lo and
+        behold, KK raises!:
+      </p>
+      <section>
+        <img src="img/KK raise test 3 - OOP.png" alt="KK raise test 3 - OOP">
+        <p>
+          KK raise test 3 - OOP
+        </p>
+      </section>
+      <section>
+        <img src="img/KK raise test 3 - IP facing bet.png" alt="KK raise test 3 - IP facing bet">
+        <p>
+          KK raise test 3 - IP facing bet
+        </p>
+      </section>
+      <section>
+        <img src="img/KK raise test 3 - OOP after IP raise.png" alt="KK raise test 3 - OOP after IP raise">
+        <p>
+          KK raise test 3 - OOP after IP raise
+        </p>
+      </section>
+      <p>
+        And there you have it, ladies and gentlemen. Whether or not KK raises
+        is about the tradeoff between how much equity it can deny from hands
+        that are behind, and how much it loses when it’s raising into a better
+        hand. And of course, the ratio between how often KK is betting into
+        hands that are behind or ahead.
+      </p>
+      <p>
+        That being said, OOP’s ability to reraise is also something that
+        affects whether KK want to raise or not. I tried building on top of
+        the previous sim and keeping OOP’s range bet but allowing OOP to raise
+        on the flop (still no betting on turn and river), and KK don’t raise
+        anymore. Which implies that KK are indeed afraid of a re-raise:
+      </p>
+      <section>
+        <img src="img/KK raise test 4 - OOP nodelock.png" alt="KK raise test 4 - OOP nodelock">
+        <p>
+          KK raise test 4 - OOP nodelock
+        </p>
+      </section>
+      <section>
+        <img src="img/KK raise test 4 - IP.png" alt="KK raise test 4 - IP">
+        <p>
+          KK raise test 4 - IP
+        </p>
+      </section>
+      <p>
+        I was curious what KK were so scared of, so I nodelocked KK to
+        re-raise the OOP nodelocked range bet, and this is what the strategy
+        was. Basically, shoving with a balanced range that makes KK
+        indifferent to calling or folding:
+      </p>
+      <section>
+        <img src="img/KK raise test 5 - OOP nodelock.png" alt="KK raise test 5 - OOP nodelock">
+        <p>
+          KK raise test 5 - OOP nodelock
+        </p>
+      </section>
+      <section>
+        <img src="img/KK raise test 5 - IP nodelock.png" alt="KK raise test 5 - IP nodelock">
+        <p>
+          KK raise test 5 - IP nodelock
+        </p>
+      </section>
+      <section>
+        <img src="img/KK raise test 5 - OOP facing raise.png" alt="KK raise test 5 - OOP facing raise">
+        <p>
+          KK raise test 5 - OOP facing raise
+        </p>
+      </section>
+      <section>
+        <img src="img/KK raise test 5 - IP facing shove.png" alt="KK raise test 5 - IP facing shove">
+        <p>
+          KK raise test 5 - IP facing shove
+        </p>
+      </section>
+      <p>
+        A fantastic detail about OOP’s shoving range above is that OOP’s bluff
+        preference goes like this, from highest to lowest preference:
+      </p>
+      <ul>
+        <li>
+          A9s (16.717% equity) (Marginally more equity than other Axs because
+          it wins on a 9 turn and 9 river)
+        </li>
+        <li>
+          Axs (16.414% equity)
+        </li>
+        <li>
+          Offsuit trash (0.606% equity)
+        </li>
+      </ul>
+      <p>
+        The reason is because by using bluffs with more equity against KK, OOP
+        can add more combos of bluffs into its shoving range, which increases
+        how often it’s winning the pot. Great little detail.
+      </p>
+      <p>
+        Coming back to why KK doesn’t raise, we can think about it this way.
+        KK never has an incentive to raise (or bet) against a range of pure
+        nuts and pure air. If KK bets against pure nuts, it’s just burning
+        money. If KK bets against a pure bluff, either the bluff will fold (no
+        loss to the bluff because bluffs never win at showdown anyways) or the
+        bluff will re-raise KK as part of a perfectly balanced range, making
+        KK indifferent, and effectively making KK lose the whole pot which is
+        now larger because KK raised.
+      </p>
+      <p>
+        If we look at things in a vacuum (no ranges involved), a hand with
+        less equity never has an incentive to raise against a hand with more
+        equity. It’s always -EV. On the other hand, a hand with more equity
+        DOES have incentive to raise against a hand with less equity, because
+        if the hand with more equity raises large enough, the hand with less
+        equity won’t be getting the right pot odds to call and can’t make a
+        profitable call (assuming it goes straight to showdown without any
+        more streets of betting). This is what we call “denying equity”.
+      </p>
+      <p>
+        If we go full circle back to the original sim, we can basically say
+        that there’s enough AA in OOP’s betting range that raising with KK
+        becomes unprofitable. Essentially, the AA are “protecting” the offsuit
+        trash. If OOP’s range consisted of only offsuit trash, KK would always
+        raise and deny equity. But when AA are mixed in there at a high enough
+        frequency, KK simply can’t raise against OOP’s range profitably. That
+        being said, if KK does decide to throw money into the abyss by
+        raising, it’s clear what has to be done based on test sim 5 shown
+        above - re-raise with another perfectly polarized range. And fold all
+        the remaining trash, of course.
+      </p>
+      <p>
+        I think in general, nutted hands bet together with bluffs to make our
+        opponent’s bluffcatchers indifferent to calling or folding and
+        therefore win the pot. Marginal hands have an incentive to raise if
+        they can deny enough equity that makes it worth it to raise even
+        though they’re sometimes losing money when they’re behind. Obviously,
+        a GTO opponent should construct a betting range with the right ratio
+        of value hands and bluffs, also incorporating the equity of value
+        hands and bluffs, such that it isn’t profitable for a marginal hand to
+        re-raise.
+      </p>
+      <p>
+        So that’s the theory, but obviously it’s a whole different task to
+        figure out where that boundary is where KK switch from always calling
+        to raising. A task for another day!
+      </p>
+      <h1>
+        Why doesn’t OOP just polarize with an all-in on the flop? Why the
+        shenanigans over turns and rivers?
+      </h1>
+      <p>
+        While thinking about KK raising OOP and potentially getting stacks in
+        on the flop, I got curious about this question. Would OOP prefer to
+        just shove with a balanced range on the flop, instead of betting small
+        and opening itself to raises and having to play turns and rivers?
+      </p>
+      <p>
+        So I tried running a version of the sim with an additional bet sizing
+        of all-in for OOP on the flop. I guessed that given the option, the
+        solver would opt to shove the flop instead of betting across multiple
+        streets. But, the solver chose never to use the all-in sizing, keeping
+        the same 1x pot sizing. I’m pretty sure the reason is because:
+      </p>
+      <ul>
+        <li>
+          If OOP all-ins on the flop, they can basically only have 50% bluffs.
+          In this case, with a 950 all-in, IP needs to be good <code>950 /
+          (950 + 950 + 50) = 48%</code> of the time, so OOP can only have 48%
+          bluffs. The amount of bluffs you can have asymptotically approaches
+          50% (from the bottom) as the bet increases relative to the pot size.
+        </li>
+      </ul>
+      <section>
+        <img src="img/Alpha Value vs Bet Size wrt Pot.png" alt="Alpha Value vs Bet Size wrt Pot">
+        <p>
+          Alpha Value vs Bet Size wrt Pot
+        </p>
+      </section>
+      <ul>
+        <li>
+          If you instead have multiple streets of betting, you can
+          geometrically increase the amount of bluffs you can have, increasing
+          the number of hands you can add in your perfectly polarized betting
+          ranges, which increases your winnings, because whenever you bet with
+          a balanced range, you effectively win all the money in the pot.
+        </li>
+      </ul>
+      <h1>
+        Flop Nuts-To-Bluff Ratio in OOP’s Polarized Betting Range
+      </h1>
+      <p>
+        Okay. So how do we reason about the correct ratio between value and
+        bluffs? How do we know how many bluffs to add in? Fundamentally, the
+        correct ratio of value to bluffs is determined by the bet sizings it
+        takes to get all-in on the river, and the equity our value hands have
+        against our opponent’s range of bluffcatchers. Obviously this is a toy
+        game which is why we can simplify the math like this.
+      </p>
+      <p>
+        If we look forward to the turn and river, we can see that after
+        betting 1x pot on the flop, OOP wants to bet 1.5x pot on the turn and
+        1.125x pot on the river to be going all-in on the river with a
+        balanced range. Based on the following alpha values for those bet
+        sizings:
+      </p>
+      <ul>
+        <li>
+          1x pot bet should have 0.67 value
+        </li>
+        <li>
+          1.5x pot bet should have 0.625 value
+        </li>
+        <li>
+          1.125x pot bet should have 0.65 value
+        </li>
+      </ul>
+      <p>
+        Multiplying all those, we should have 0.272 proportion of nuts (versus
+        air) in our flop betting range.
+      </p>
+      <p>
+        However KK also has some equity against AA, and our bluffs have some
+        (0.6%) equity against KK. We aren’t playing with pure nuts and bluffs.
+      </p>
+      <p>
+        Factoring this additional information in, if we use the equation
+        <code>nut_equity(nut_ratio) + bluff_equity(1 - nut_ratio) =
+        0.272</code>, we solve our updated <code>nut_ratio</code> for 0.292.
+        If we look at the ratio of AA to air in the flop betting range, we see
+        that it’s <code>6/20.3 = 0.296</code>:
+      </p>
+      <section>
+        <img src="img/Flop OOP Nut To Bluff Ratio for Bet.png" alt="Flop OOP Nut To Bluff Ratio for Bet">
+        <p>
+          Flop OOP Nut To Bluff Ratio for Bet
+        </p>
+      </section>
+      <p>
+        Pretty spot on.
+      </p>
+      <h1>
+        Varying Strategy on Turn Runouts
+      </h1>
+      <p>
+        *Thankfully* there isn’t much more to the strategy now. This post is
+        getting kinda long-winded. Here’s the turn strategy and EV OOP:
+      </p>
+      <section>
+        <img src="img/Turn OOP strategy.png" alt="Turn OOP strategy">
+        <p>
+          Turn OOP strategy
+        </p>
+      </section>
+      <section>
+        <img src="img/Turn EV OOP.png" alt="Turn EV OOP">
+        <p>
+          Turn EV OOP
+        </p>
+      </section>
+      <p>
+        There’s 5 different categories of turn cards:
+      </p>
+      <ul>
+        <li>
+          A: This is bad for OOP because it reduces the combos of AA we can
+          have. Our betting frequency goes way down. One might naively think
+          it’s good for AA because now KK are drawing dead but the blocker
+          effect is much more important
+        </li>
+        <li>
+          K: This is terrible for OOP because now KK can get it in and deny
+          equity. OOP EV is literally 0 here. Check-fold
+        </li>
+        <li>
+          2, 3, 4, 5: These cards are actually good for OOP. The reason is
+          because they block combos of our bluffs, meaning we had AA at a
+          higher frequency than what we wanted on the flop. So we are betting
+          at the highest frequency on these cards
+        </li>
+        <li>
+          8: This card is good for OOP because offsuit trash picks up some
+          equity against KK (chop on K or A) which lets us add slightly more
+          bluff combos
+        </li>
+        <li>
+          Anything else: These cards are blanks. OOP continues to bet with a
+          polarized, balanced range
+        </li>
+      </ul>
+      <h2>
+        A turn - Why do we check AA at some frequency?
+      </h2>
+      <p>
+        Here’s the OOP and IP strategy on an A turn:
+      </p>
+      <section>
+        <img src="img/Turn A OOP strategy.png" alt="Turn A OOP strategy">
+        <p>
+          Turn A OOP strategy
+        </p>
+      </section>
+      <section>
+        <img src="img/Turn A IP Strategy after OOP check.png" alt="Turn A IP Strategy after OOP check">
+        <p>
+          Turn A IP Strategy after OOP check
+        </p>
+      </section>
+      <p>
+        At first this really confused me. Why do AA check the turn sometimes
+        here if they never check the flop? AA are still always ahead of KK.
+        Additionally, if KK didn’t have any incentive to bet on the flop, why
+        do they bet this turn when checked to sometimes?
+      </p>
+      <p>
+        The reason is because offsuit trash picks up significant equity (for a
+        chop) against KK on an A turn. Offsuit trash used to have 0.6% equity,
+        now it has 4.5% equity:
+      </p>
+      <section>
+        <img src="img/Turn A OOP equity.png" alt="Turn A OOP equity">
+        <p>
+          Turn A OOP equity
+        </p>
+      </section>
+      <p>
+        After an A turn, on an A or 8 river, offsuit trash is chopping against
+        KK. So, KK has an incentive to deny this equity by betting. GTO’s
+        response to this is to slowplay AA at a very low frequency to protect
+        its offsuit trash and help them realize their equity.
+      </p>
+      <p>
+        I ran a version of the sim where I didn’t give KK the option to bet
+        the turn and then OOP never slowplayed AA. This makes sense because
+        its checking range doesn’t need to be protected; offsuit trash will
+        always be able to realize its equity.
+      </p>
+      <p>
+        I also ran a version of the sim where I didn’t give OOP the option to
+        bet the river (meaning AA’s only incentive to slowplay is if KK bets
+        the turn after a OOP check) and AA still checks the turn sometimes,
+        just at a lower frequency.
+      </p>
+      <p>
+        As I already mentioned, on the flop, there is the same incentive for
+        AA to check back at some extremely low frequency to help its offsuit
+        trash realize its equity, but offsuit trash has such low equity on the
+        flop (0.6%) that the checking ratio is so small that PIO can’t detect
+        it.
+      </p>
+      <h2>
+        A turn - number-crunching the bluff ratio
+      </h2>
+      <p>
+        Obviously the other elephant in the room is that on an A turn, the
+        combos of nuts we can have is halved, which reduces the amount of
+        bluffs we can add to our betting ranges, which reduces our betting
+        overall.
+      </p>
+      <p>
+        With 1.5x pot on the turn and 1.125x pot on the river, we want 40%
+        value in our betting range if we forget the marginal equity of KK vs
+        AA and offsuit air vs KK. Sure enough, our betting range has 40%
+        value, so its pretty close:
+      </p>
+      <section>
+        <img src="img/Turn A OOP Betting Range.png" alt="Turn A OOP Betting Range">
+        <p>
+          Turn A OOP Betting Range
+        </p>
+      </section>
+      <h2>
+        K turn
+      </h2>
+      <p>
+        A K turn completely wrecks the equity for OOP:
+      </p>
+      <section>
+        <img src="img/Turn K OOP equity.png" alt="Turn K OOP equity">
+        <p>
+          Turn K OOP equity
+        </p>
+      </section>
+      <p>
+        That being said, OOP still has some marginal equity, but is
+        check-folding its entire range. EV of calling AA is negative. Why is
+        that?
+      </p>
+      <section>
+        <img src="img/Turn K OOP strategy against bet after checking.png" alt="Turn K OOP strategy against bet after checking">
+        <p>
+          Turn K OOP strategy against bet after checking
+        </p>
+      </section>
+      <p>
+        The reason is because OOP isn’t getting the right pot odds to call.
+        With equity of 6.8%, without any more streets of betting, AA can only
+        make a breakeven call at ~8% pot-sized bet. Additionally, even if we
+        hit our outs, AA can’t get any value because our range is literally
+        only AA. So there’s 0 implied odds here. KK will just muck on the bad
+        rivers.
+      </p>
+      <p>
+        I ran a version of the sim where KK can only bet 10% on the turn, and
+        AA can’t call:
+      </p>
+      <section>
+        <img src="img/Turn K OOP strategy against 10 percent bet.png" alt="Turn K OOP strategy against 10 percent bet">
+        <p>
+          Turn K OOP strategy against 10 percent bet
+        </p>
+      </section>
+      <p>
+        If we run another sim where KK can only bet some ridiculously small
+        size like 2% of the pot, we see that AA are now calling because they
+        are getting the right pot odds:
+      </p>
+      <section>
+        <img src="img/Turn K OOP strategy against 2 percent bet.png" alt="Turn K OOP strategy against 2 percent bet">
+        <p>
+          Turn K OOP strategy against 2 percent bet
+        </p>
+      </section>
+      <h2>
+        2, 3, 4, 5 turn
+      </h2>
+      <p>
+        We’re never slowplaying AA here because offsuit trash is drawing dead.
+        The number of AA we have remains the same, and the number of bluffs we
+        bet also remains the same (as on a blank), but the betting range just
+        happens to be a larger percentage of our overall range because these
+        turn cards block some combos of our bluffs.
+      </p>
+      <p>
+        AA makes up 43% of our betting range here:
+      </p>
+      <section>
+        <img src="img/Turn 2 OOP Betting Range.png" alt="Turn 2 OOP Betting Range">
+        <p>
+          Turn 2 OOP Betting Range
+        </p>
+      </section>
+      <h2>
+        8 turn
+      </h2>
+      <p>
+        Our offsuit trash picks up a lot of equity here - it chops on an A or
+        K river. We slowplay AA a very small portion of the time, to protect
+        our offsuit trash which has some equity. We can have a greater ratio
+        of bluffs in our betting range because our offsuit trash bluffs have a
+        bit more equity against KK. Specifically our betting range has 39% AA
+        now.
+      </p>
+      <p>
+        8 turn is similar to A turn in that our bluffs pick up some equity and
+        need help to be able to realize that equity.
+      </p>
+      <p>
+        Similar to the A turn, KK also is mixing between betting and checking
+        once checked to, in order to deny the equity of offsuit trash.
+      </p>
+      <h2>
+        Blank turn
+      </h2>
+      <p>
+        Here’s OOP strategy on a blank turn. Pretty standard:
+      </p>
+      <section>
+        <img src="img/Turn blank OOP strategy.png" alt="Turn blank OOP strategy">
+        <p>
+          Turn blank OOP strategy
+        </p>
+      </section>
+      <p>
+        Never slowplay AA here, offsuit trash is drawing dead. Pretty much
+        same scenario as 2/3/4/5 turn except we still have all our offsuit
+        trash from the flop and thus need to give up a little more often.
+        About 43% of our betting range is AA.
+      </p>
+      <h1>
+        River Play
+      </h1>
+      <p>
+        Any interesting rivers? I mean, not really…
+      </p>
+      <ul>
+        <li>
+          8 turn and A river means both players always chop. No one’s ever
+          folding. Same for A turn and 8 river
+        </li>
+      </ul>
+      <p>
+        Maybe the most interesting spot is an A turn and A river. Here, the
+        offsuit trash is chopping with KK. But AA is beating KK obviously. How
+        do we determine KK EV here?
+      </p>
+      <p>
+        If AA makes up 300/975 which is ~31% of the shoving range, KK has a
+        breakeven call with the stack sizes. The deeper stacks are, the more
+        bluffs AA needs to have for KK to breakeven. Obviously if AA is
+        underbluffing then KK always folds. If AA is overbluffing, KK has
+        positive EV and is always calling, but it’s also never getting back
+        more than half the pot. At best it’s chopping.
+      </p>
+      <p>
+        I believe OOP always adds all offsuit trash into its jamming range on
+        the river.
+      </p>
+      <h1>
+        Closing (Extremely Important) Musing - Is Mixing Necessary?
+      </h1>
+      <p>
+        One concept that I’m still struggling to understand fully is mixing.
+        In this sim, whenever KK is faced with a breakeven call/fold, it mixes
+        its strategy between the two. But if calling and folding have the same
+        EV, why can’t KK just always call or always fold? Does it need to mix
+        at a specific frequency?
+      </p>
+      <p>
+        Well, I ran a sim where I node locked KK’s flop calling frequency at
+        75% instead of 50% and it turns out, it does matter:
+      </p>
+      <section>
+        <img src="img/Flop OOP strategy against KK 75 percent call node lock.png" alt="Flop OOP strategy against KK 75 percent call node lock">
+        <p>
+          Flop OOP strategy against KK 75 percent call node lock
+        </p>
+      </section>
+      <p>
+        Running a sim where KK always calls on the flop, I got another
+        surprise. I thought we would never bet our offsuit air and only bet
+        with AA. But it turns out we bet some offsuit air. It makes sense
+        because while KK never fold on the flop, KK will still fold on the
+        turn and river, so we bring some offsuit air with us (but not as much)
+        to bet together with AA so we can increase our winnings on later
+        streets.
+      </p>
+      <p>
+        But another surprising thing is that the amount of offsuit air we
+        bring along is exactly the same as when I node locked KK to call at
+        75% frequency. I thought it would be different. I thought there was
+        some calculation I could use to connect these two numbers.
+      </p>
+      <p>
+        I then tried running the sim where KK always folds, and unsurprisingly
+        we always bet our offsuit trash:
+      </p>
+      <section>
+        <img src="img/Flop OOP strategy against KK always folding node lock.png" alt="Flop OOP strategy against KK always folding node lock">
+        <p>
+          Flop OOP strategy against KK always folding node lock
+        </p>
+      </section>
+      <p>
+        Surprisingly we check back AA at some frequency according to the
+        solver but I’m pretty sure this is a bug. There’s no reason AA would
+        ever accept a lower EV than 50 when it could just bet and win 50 right
+        then and there.
+      </p>
+      <p>
+        But then I tried running the sim with KK folding at a 75% frequency,
+        and it turns out the strategy is exactly the same as when KK is
+        folding at 100% frequency - betting its entire range:
+      </p>
+      <section>
+        <img src="img/Flop OOP strategy against KK 75 percent fold node lock.png" alt="Flop OOP strategy against KK 75 percent fold node lock">
+        <p>
+          Flop OOP strategy against KK 75 percent fold node lock
+        </p>
+      </section>
+      <p>
+        This should give us an interesting look into how the solver thinks
+        about the game. Whenever our opponent leans slightly in one direction
+        (overcalling or overfolding) the solver will then maximally adjust the
+        strategy in the other direction to maximize EV.
+      </p>
+      <h1>
+        Summary
+      </h1>
+      <p>
+        Well, after going through the work covered in this blog post, I’m
+        actually surprised at how many variables are at play here, even on a
+        really simple toy game with simple ranges and a blank flop.
+      </p>
+      <p>
+        This toy game can actually become a lot more complex if we just add a
+        few different hands in the preflop ranges, or make the flop interact
+        with the ranges more.
+      </p>
+      <p>
+        Really makes you realize that normal poker hands have so many
+        variables coinciding with each other that it’s quite difficult to
+        tangle them apart and understand what’s going on. Without theory it’s
+        easy to end up trying to pattern match, creating (really) rough
+        heuristics, and rationalizing instead of reasoning about things.
+      </p>
+      <p>
+        One should definitely understand these toy games like the back of your
+        hand if you want to be good at poker. But, it’s so much work!
+      </p>      
+    </main>
+  </body>
+</html>

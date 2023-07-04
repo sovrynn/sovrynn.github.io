@@ -1,0 +1,20 @@
+/* Styles for the SWE/crypto blog post list pages. */
+
+main {
+  padding-top: 1rem;
+  width: 100%;
+}
+
+section {
+  padding-top: 0.6rem;
+  padding-bottom: 0.6rem;
+}
+
+p {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+a {
+  font-size: 1.6rem;
+}

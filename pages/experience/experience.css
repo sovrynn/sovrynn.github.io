@@ -1,0 +1,51 @@
+/* Styles for the content on the 'Experience' page. */
+
+main {
+  padding-top: 0.8rem;
+  width: 60%;
+  max-width: 400px;
+}
+
+/* Styles for the 'Experience', 'Education', etc headers. */
+.section {
+  margin-top: 1rem;
+  margin-bottom: 0.6rem;
+}
+
+/* Styles for the individual experience entries. */
+section {
+  width: 100%;
+  background-color: #e3e3e3;
+  border-radius: 0.2rem;
+  margin-top: 0.35rem;
+  margin-bottom: 0.35rem;
+  padding: 0.2rem;
+}
+
+section:hover {
+  background-color: #dbdbdb;
+}
+
+/* Styles for the parts of each experience entry. */
+.company, .position, .date {
+  margin-top: 0;
+  margin-bottom: 0;
+  text-indent: 0.2rem;
+}
+
+.section {
+  font-size: 1.6rem;
+}
+
+.company {
+  font-size: 1.2rem;
+}
+
+.position {
+  font-size: 0.9rem;
+}
+
+.date {
+  font-size: 0.8rem;
+  color: gray;
+}

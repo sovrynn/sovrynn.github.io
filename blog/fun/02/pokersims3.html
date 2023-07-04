@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../../../global.css">
+    <link rel="stylesheet" href="../../blogpost.css">
+    <title>Poker Toy Games 3</title>
+  </head>
+  <body>
+    <header>Poker Toy Games 3</header>
+    <div id="footer-of-header">
+      <span>By Henry J (November 28, 2022)</span>
+      <a href="../../../pages/fun/fun.html">back</a>
+    </div>
+    <main>
+      <p>
+        Chill lowkey blog post. Mostly unfiltered stuff. Pretty impartial to
+        posting this. But deciding to put it up because hey, maybe someone
+        will find it valuable.
+      </p>
+      <h1>
+        Sim 1: Enabling turn bets on AA/A2o/A3o vs KK on 888 flop
+      </h1>
+      <p>
+        We slowplay AA a lot less. This is because AA reward when
+        check-raising with AA is higher because not only does KK have to
+        defend the flop at some frequency, it also has to defend the turn at
+        some frequency. So we don’t need to have as many AA in our checking
+        range to allow it to realize its full equity.
+      </p>
+      <p>
+        We also bring along more A2o/A3o because not only do we need to bluff
+        on the flop, we also need to bluff the turn.
+      </p>
+      <p>
+        8 and A turns are nutted for us, K turns are shit, and everything else
+        is very straightforward.
+      </p>
+      <p>
+        Turn strategy is also super interesting. On the turn, we have
+        basically a mirror situation like on the flop. Basically, we fastplay
+        AA at some frequency along with bluffs to make KK indifferent to
+        calling or folding. But we also slowplay AA at some frequency to
+        realize the equity of our checking range. That’s very, very cool.
+      </p>
+      <h1>
+        Sim 1 nodelock 1 - An opponent who plays mostly GTO but will get very
+        scared against a check-raise
+      </h1>
+      <p>
+        If we nodelock KK to always fold to a check-raise (and lock its
+        betting frequency facing a check) we always slowplay AA, and then
+        check-raise our entire range if KK bet. I think what happens is the
+        following sequence of adjustments:
+      </p>
+      <ul>
+        <li>
+          A2o/A3o immediately start checking the flop more instead of betting
+          cause their EV shoots way up when that happens
+        </li>
+        <li>
+          Then OOP’s betting range starts to get unbalanced because it’s only
+          AA. So KK defends less and less. But KK still has to defend against
+          a bet at some low frequency because otherwise A2o/A3o would prefer
+          to bluff the flop instead of check-raising
+        </li>
+        <li>
+          Since KK is only defending a bet at some very low frequency, AA
+          actually prefer to check along with the bluffs, hoping for a
+          check-raise to get value
+        </li>
+      </ul>
+      <p>
+        And then the entire OOP range slowplays, hoping for a bet from KK. If
+        KK bet, then the entire range check-raises and gets to win
+        immediately. If KK check, then OOP has to play the turn.
+      </p>
+      <h1>
+        Sim 1 nodelock 2 - An opponent who plays very passively but is an
+        overcaller - Always calls a flop bet, but always checks back when
+        checked to
+      </h1>
+      <p>
+        AA never slowplay. It brings along some A2o/A3o to bluff with on the
+        turn.
+      </p>
+      <p>
+        Rest of the A2o/A3o check the flop and get to see a free turn! Don’t
+        need any protection.
+      </p>
+      <h1>
+        Sim 2: Enabling turn and river bets on AA/A2o/A3o vs KK on 888 flop
+      </h1>
+      <p>
+        Again, we slowplay AA a lot less because when we check-raise with
+        them, KK has to defend not only on the flop but also on the turn and
+        river, so we can win much bigger pots and the EV is greater. So in
+        order to realize all the equity of our checking range we don’t need to
+        slowplay as much.
+      </p>
+      <p>
+        When we fastplay AA we also bring along even more A2o/A3o because not
+        only do we need bluffs for the flop and turn but we also need bluffs
+        for the river.
+      </p>
+      <p>
+        Also, KK has incentives to deny equity on the flop and turn, so it
+        wants to bet, but it never bets the river when checked to. So on the
+        river, we never slowplay AA.
+      </p>
+      <h1>
+        Sim 2 nodelock: KK always folding turn on a blank to a bet
+      </h1>
+      <p>
+        I wanted to try a sim where I nodelock bad turn strategies across all
+        turn runouts just to see how GTO thinks. For this sim, I made KK
+        always fold on a blank turn to a bet (typically it mixes at the right
+        frequency to prevent us from being able to bet our bluffs profitably
+        as opposed to indifferently).
+      </p>
+      <p>
+        I was pretty sure what happens here is that OOP will bluff ATC on the
+        flop because on most turns it can win the pot for free.
+      </p>
+      <p>
+        What ended up happening is that KK adjusted its flop strategy - it
+        mostly folded (to prevent itself from getting exploited on the turn)
+        and raised the other part of the time.
+      </p>
+      <p>
+        Obviously that’s not what I wanted so I then nodelocked KK original
+        strategy of call/folding at the right frequency.
+      </p>
+      <p>
+        And indeed OOP bet ATC on the flop, to bring ATC to the turn, to win
+        the pot undisputed on most turns.
+      </p>
+      <p>
+        Also, just a fun fact - Pio does this great thing where if you
+        nodelock a turn, it will nodelock all other turns that are
+        conceptually the same suit. So if you nodelock something on a 2c turn
+        on a 8c8s8h flop, it will also nodelock the same strategy for 2s and
+        2h, because they are conceptually the same (same suit as one of the 8
+        on the flop). It doesn’t nodelock for 2d.
+      </p>
+      <h1>
+        Sim 3: Flop bets only, AA/KQo/A2o/A3o vs JJ on 888 flop
+      </h1>
+      <p>
+        Interesting. So we check our entire range. JJ always bet to deny
+        equity. And when we raise, we raise with AA and KQo only. Muck
+        everything else. Call with the remainder of KQo cause we’re getting
+        the right pot odds to make a +EV call.
+      </p>
+      <p>
+        The reason we don’t call KQo 100% and use A2o/A3o to bluff is because
+        when we can bluff with higher equity hands, JJ is forced to call more
+        frequently to make us indifferent to bluffing with our worst bluff.
+        Consequently, AA get value more frequently.
+      </p>
+      <p>
+        Why don’t AA ever fastplay? Obviously it’s because its EV is higher on
+        a check. That’s because JJ is forced to fastplay because that denies
+        equity from all our weak hands. But that allows AA to get more value
+        by slowplaying.
+      </p>
+      <h1>
+        Sim 3 nodelock 1: JJ always check flop back
+      </h1>
+      <p>
+        So here I guessed that we would always fastplay AA, and mix in KQo for
+        our bluff to get the maximum calling frequency from JJ. And just check
+        to realize equity with the rest of our range. And I was right!
+      </p>
+      <h1>
+        Sim 3 nodelock 2: Adding in K2o/K3o/Q2o/Q3o to OOP
+      </h1>
+      <p>
+        Nothing changes. We check our whole range, then raise with the same
+        range of AA and KQo, and then muck the rest. I only tested this to
+        make sure that EV of JJ betting goes up when we add more weaker hands
+        to OOP’s range, which it does.
+      </p>
+      <h1>
+        Sim 4: Flop/turn bets, AA/KQo/A2o/A3o vs JJ on 888 flop
+      </h1>
+      <p>
+        My first reaction to this sim was confusion. In the previous sim, when
+        only flop bets were allowed, OOP checks range and then JJ always bets.
+      </p>
+      <p>
+        Now, OOP fastplays AA (and some bluffs) some portion of the time. Why?
+      </p>
+      <h1>
+        Sim 4 nodelock 1: Nodelock OOP to check range
+      </h1>
+      <p>
+        I nodelocked OOP to check its range on the flop and JJ check back 100%
+        of the time. I don’t get why it’s different.
+      </p>
+      <p>
+        I feel like there’s a connection I still don’t understand about what
+        it means when OOP range is indifferent to slowplaying/fastplaying it’s
+        nuts, and IP is indifferent to realizing equity or checking, etc.
+      </p>
+      <h1>
+        Sim 4 nodelock 2: Nodelock OOP to check range, and JJ to always bet
+        when checked to
+      </h1>
+      <p>
+        Ok I nodelocked OOP to check its range on the flop, and made JJ bet
+        100% of the time, just like sim 3. Sim 3 is the same setup except only
+        flop bets are allowed.
+      </p>
+      <p>
+        What happens is KQo never calls. Why? Well KQo can’t profitably call
+        anymore. Previously, KQo could call and go straight to showdown which
+        means we could use its equity to calculate pot odds. Now, KQo can’t go
+        straight to showdown, because it has to face another bet on the turn.
+        So it’s no longer getting the right pot odds to call.
+      </p>
+      <p>
+        Here’s another interesting question. KQo and A2o/A3o are all
+        indifferent to bluffing or folding (0 EV) yet AA mixes in A2o/A3o as
+        bluffs instead of KQo at some frequency. KQo has more equity against
+        JJ than A2o/A3o, so if AA always bluffed with KQo, AA could mix in
+        more combos of bluffs. So why do we mix in A2o/A3o?
+      </p>
+      <p>
+        I believe it’s so that on K and Q turns, we can still have some
+        bluffs.
+      </p>
+      <p>
+        Here’s one more interesting detail. Facing a check-raise, JJ GTO
+        mixing frequency between call/fold is now 87% call, whereas it was 78%
+        call when only flop bets were allowed. I think this mixing frequency
+        is based on KQo - if it was lower, we could always profitably bluff
+        KQo.
+      </p>
+      <p>
+        I nodelocked the calling frequency of JJ facing a check-raise to be
+        lower and indeed, KQo is check-raising at a 100% frequency instead of
+        mixing now.
+      </p>
+      <p>
+        But here’s the question. Why does JJ have to call at an 87% frequency
+        instead of 78% frequency now?
+      </p>
+      <p>
+        I have two theories why:
+      </p>
+      <ul>
+        <li>
+          Something to do with the fact that KQo has more equity than just its
+          actual equity against JJ because on any turn that completes not just
+          KQo but also A2o and A3o, KQo can win the pot entirely. This is
+          DEBUNKED because we are only drawing to one card on the turn and
+          there are 13/49 turns where OOP just wins the pot outright and that
+          is only 26% which is less than 27% equity that KQo has against JJ.
+        </li>
+        <li>
+          In the other sim, KQo has a profitable call against JJ because it’s
+          on the right side of the pot odds boundary. In order to make KQo
+          indifferent to bluffing, JJ actually have to give KQo a positive EV
+          when bluffing as opposed to a 0 EV because KQo has to be indifferent
+          to a profitable +EV call, not a 0 EV fold. But in this sim, KQo has
+          to be indifferent to a 0 EV fold. So perhaps we can revert to the
+          normal mixing frequency in this sim. But let me run the numbers for
+          the EV on a KQo bluff:
+        </li>
+      </ul>
+      <p>
+        If X is JJ folding frequency, KK EV is:
+      </p>
+      <ul>
+        <li>
+          X(75) + (1-X)(0.277)(125) - (1-X)(0.723)(75)
+        </li>
+      </ul>
+      <p>
+        This formula holds up in sim 3 (correctly calculates JJ folding
+        frequency). But in this sim, it doesn’t hold up. So, what gives?
+      </p>
+      <p>
+        I think we need to change the formula because we don’t go straight to
+        showdown in this sim. And I took a look at some turns and realized
+        what’s going on.
+      </p>
+      <p>
+        Basically, on a blank turn (2-7, 9-T) which doesn’t improve either
+        player’s range, KQo actually gets to realize its equity some of the
+        time. This is evident because on these blank turns after checking KQo
+        at some frequency (along with AA to protect it), JJ also checks back
+        at some frequency.
+      </p>
+      <p>
+        Additionally, we can’t use the equity of KQo to calculate the EV of
+        its actions on the flop because we don’t go straight to showdown. We
+        have to calculate its EV across the various turns.
+      </p>
+      <p>
+        On an 8/Q/K/A turn (13/49), KQo gets to win the pot outright because
+        these turns improve too many of OOP’s bluffs, and IP has to fold JJ to
+        a bet 100% of the time.
+      </p>
+      <p>
+        On a J turn (4/49), KQo loses the pot, so no harm there.
+      </p>
+      <p>
+        But on the rest of the blank turns, KQo can realize its equity some of
+        the time. Its EV is 24 on blank turns, and the pot is 200, so let’s
+        say its equity on these turns is 12%.
+      </p>
+      <p>
+        Then, KQo overall equity heading to the turn is 100%(13/49) +
+        12%(32/49) = 34%.
+      </p>
+      <p>
+        If we plug this new KQo equity number into the original equation, it
+        goes from:
+      </p>
+      <ul>
+        <li>
+          X(75) + (1-X)(0.277)(125) - (1-X)(0.723)(75)
+        </li>
+        <li>
+          to X(75) + (1-X)(0.34)(125) - (1-X)(0.66)(75)
+        </li>
+        <li>
+          Solved for X = 8.5%
+        </li>
+      </ul>
+      <p>
+        Which is too high. I was pondering what was wrong in my calculations
+        until I figured it out. When we have KQo, we take away 2 of our outs.
+        So the new calculation should:
+      </p>
+      <ul>
+        <li>
+          11/47 win the pot
+        </li>
+        <li>
+          4/47 lose the pot
+        </li>
+        <li>
+          32/47 12% equity
+        </li>
+        <li>
+          Net equity: 31.6%
+        </li>
+        <li>
+          New EV equation: X(75) + (1-X)(0.316)(125) - (1-X)(0.684)(75)
+        </li>
+        <li>
+          Solve for EV 0: X = 13.6%
+        </li>
+      </ul>
+      <p>
+        The actual folding frequency of JJ facing a check-raise is 13%. It’s
+        close enough I suppose…
+      </p>
+      <h1>
+        Going back to the original sim 4
+      </h1>
+      <p>
+        Okay so I went on a bit of a tangent. The simple reason why JJ doesn’t
+        bet if OOP range checks is because OOP can raise more often than
+        before because it can bluff not only on the flop but also on the turn.
+        So AA fastplay more, and slowplay less, until JJ become indifferent to
+        betting again when checked to.
+      </p>
+      <h1>
+        Musings on EV and reasoning about solver
+      </h1>
+      <p>
+        I’m realizing that when considering how play on future streets across
+        all runouts affects a particular hand’s decision at any decision
+        point, all the information from the future can be boiled down to the
+        EV of the potential actions. If you can correctly distill the
+        (relative) EVs of the potential actions of a given hand in any given
+        spot, that’s all you need to know to make a decision.
+      </p>
+      <p>
+        The thing is, these decisions do cascade backward and affect the
+        strategy. And that’s how GTO creates its strategy AFAIK - it plays
+        smaller games on various river runouts, updates the EVs, and then that
+        information cascades backwards and affects the strategy on prior
+        streets.
+      </p>
+      <p>
+        Once you start to add in lots of hands, bet sizes, and multiple
+        streets of betting, it’s pretty obvious that recreating an omniscient
+        strategy is impossible. There are just way too many river spots and
+        way too many hands. Then, exploitative poker becomes about navigating
+        a dark jungle better than your opponent. No one can see the full
+        jungle.
+      </p>
+      <h1>
+        Think about balance from both sides of the equation
+      </h1>
+      <p>
+        All the sims I’ve run so far, OOP has been polarizing against IP, and
+        I always think about balance from what the IP defender should do to
+        make OOP indifferent.
+      </p>
+      <p>
+        The thing is, OOP also needs to balance its ranges so that IP is
+        indifferent to call/fold against a bet, or bet/check against a check.
+      </p>
+      <p>
+        If OOP is even slightly overbluffing on a bet, IP should always call.
+        If OOP is even slightly underbluffing on a bet, IP should always fold.
+        It’s that simple.
+      </p>
+      <p>
+        If OOP is even slightly slowplaying too much (assuming the rest of the
+        strategies are GTO), IP should never bet to deny equity. If OOP is
+        even slightly slowplaying too little, IP should always bet to deny
+        equity.
+      </p>
+      <p>
+        It’s literally a leveling game.
+      </p>
+      <h1>
+        Caveats of nodelocking to keep in mind
+      </h1>
+      <p>
+        The issue with nodelocking on individual turn/river runouts is that
+        GTO won’t adjust the strategy of previous streets as much because
+        you’ve only nodelocked one runout among the various turn and
+        turn/river runouts.
+      </p>
+      <p>
+        Additionally, even when you nodelock one line of action on a given
+        street, GTO will adjust its strategy on all other streets and lines of
+        action to adjust. If you don’t have a holistic and thorough
+        understanding of how GTO creates its strategy, you won’t understand or
+        even be aware of all the various adjustments that GTO makes.
+      </p>
+      <p>
+        Additionally, even when you nodelock one line of action to how you
+        think your opponent is going to play, GTO makes its adjustments
+        assuming that your opponent is still playing GTO on all other streets.
+        So if you nodelock some flop mistake, GTO will make its adjustments
+        assuming that player still manages to play perfect GTO on all turns
+        and rivers.
+      </p>
+      <p>
+        This obviously doesn’t negate the utility of nodelocking as a tool, it
+        just means you should keep these things in mind when you’re using it.
+      </p>
+      <h1>
+        The simple discreteness with which GTO exploits non-GTO opponents
+      </h1>
+      <p>
+        GTO against a GTO opponent is actually extremely difficult to
+        replicate, but GTO is actually very discrete in how it exploits
+        non-GTO opponents. So running exploits is actually very simple
+        (although not necessarily easy).
+      </p>
+      <p>
+        For example, if you’ve nodelocked your opponent to overcall the flop
+        (but play GTO on turns and rivers) GTO will never bluff its flop bet,
+        but it will bring along enough bluffs to create the right bluffing
+        frequency on turns and rivers. So net it’s still betting some bluffs
+        on the flop but that doesn’t mean it’s actually bluffing the flop.
+      </p>
+      <p>
+        If you’ve nodelocked your opponent to overfold the flop (but play GTO
+        on turns and rivers) GTO will bluff 100% of the time with its bluffs
+        that are no longer indifferent to bluffing or giving up (higher EV on
+        a bluff) but then balance properly on the turn and river.
+      </p>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../../../global.css">
+    <link rel="stylesheet" href="../../blogpost.css">
+    <title>React Intro</title>
+  </head>
+  <body>
+    <header>React Intro</header>
+    <div id="footer-of-header">
+      <span>By Henry J (September 26, 2022)</span>
+      <a href="../../../pages/swe/swe.html">back</a>
+    </div>
+    <main>
+      <p>
+        I want to be able to read a React codebase for work. Went through
+        <a href="https://reactjs.org/docs/hello-world.html">
+          the official intro JS documentation</a> and want to create an even
+        shorter summary. Will keep this short and sweet.
+      </p>
+      <p>
+        In the end webpages are just HTML and CSS. React is just a bunch of
+        code (originated from someone at Facebook) written by people that runs
+        on top of that layer and adds certain functionality that makes it
+        easier to build webpages.
+      </p>
+      <h1>
+        Page 2: What’s JSX?
+      </h1>
+      <p>
+        JSX is a syntax extension that’s commonly used with React. It
+        basically lets you write HTML inside of Javascript code and at
+        compile-time it’ll get converted into React code.
+      </p>
+      <h1>
+        Page 3: Rendering Elements with React
+      </h1>
+      <p>
+        You can programmatically render HTML elements on a webpage using
+        React.
+      </p>
+      <h1>
+        Page 4: What are Components/Props in React?
+      </h1>
+      <p>
+        Components take props (short for properties) as input and return React
+        elements (which ultimately boil down to HTML) as output. Components
+        are composable (they can return each other). This is where all the
+        abstraction happens!
+      </p>
+      <p>
+        Components can be implemented as a:
+      </p>
+      <ul>
+        <li>
+          function
+        </li>
+        <li>
+          class that extends a certain React class and implements a render()
+          function
+        </li>
+      </ul>
+      <p>
+        Props are read-only, don’t modify them. Parent components pass props
+        down to child components, and conceptually props/data bubble down from
+        higher components to lower components in the “component
+        tree/hierarchy”.
+      </p>
+      <h1>
+        Page 5: Adding State, Constructors, and Setup/Teardown Functionality
+        to Components
+      </h1>
+      <p>
+        First of all, you have to implement components using classes to be
+        able to do all this.
+      </p>
+      <p>
+        Notes:
+      </p>
+      <ul>
+        <li>
+          Add state using the “state” property. You can initialize this state
+          in the constructor
+        </li>
+        <li>
+          There are special methods for adding setup/teardown functionality to
+          React components (ex: <code>componentDidMount()</code>,
+          <code>componentWillUnmount()</code>)
+        </li>
+        <li>
+          Use <code>setState()</code> to update a component’s state, instead
+          of directly changing the property. <code>setState()</code> will
+          automatically re-render the component for you
+        </li>
+      </ul>
+      <p>
+        A component’s state should only affect child components (data should
+        flow down the component hierarchy).
+      </p>
+      <h1>
+        Page 6: Event Handlers
+      </h1>
+      <p>
+        You will want to add event-based functionality. You can use event
+        handlers (pass the event handler function around, it will get called
+        in a callback) in pretty much the same way as you would with vanilla
+        JS.
+      </p>
+      <p>
+        In React there’s an additional step you need to do so that
+        <code>this</code> is correctly populated in event handlers. Basically
+        you use JS <code>bind()</code> function to generate a new event
+        handler function that has <code>this</code> correctly populated.
+      </p>
+      <p>
+        There’s a way for you to add extra arguments when your event handler
+        gets called.
+      </p>
+      <h1>
+        Page 7: “Conditional Rendering”
+      </h1>
+      <p>
+        You can add control flow for what kind of components you want to
+        render based on, for example, the state of your webpage/application.
+        You can even use special JS syntax to do this in concise ways!
+      </p>
+      <h1>
+        Page 8.1: Lists and map()
+      </h1>
+      <p>
+        You can use <code>map()</code> to generate lists of React components!
+      </p>
+      <h1>
+        Page 8.2: Keys to help React uniquely identify components/elements
+      </h1>
+      <p>
+        Keys are used by React to identify components. This is important, for
+        example, when React is trying to figure out what elements have changed
+        when its rendering the next “view” for a page. Keys will allow React
+        to make the updates more efficiently.
+      </p>
+      <p>
+        So, if you have a lot of elements which could be interchangeable or
+        are organized in a similar way (ex: lists of elements) you want to
+        give keys to these elements to help React do its job. You can use an
+        ID or some unique value as a key.
+      </p>
+      <p>
+        If you abstract an element with a key into a React component (as
+        opposed to plain HTML in JS) you want to put the key on the React
+        component instead of passing it down through props and then putting
+        the key in the JSX HTML. I’m not entirely sure why the doc says this
+        but I’m guessing its because React will be able to recognize and
+        utilize the key at the higher level of abstraction (on the component)
+        but doesn’t look inside the “implementation” (JSX HTML) for the key.
+      </p>
+      <h1>
+        Page 9: Forms - Move State Out of HTML and Into React
+      </h1>
+      <p>
+        Forms are a special HTML element (not sure if they’re the only one)
+        that have state (ie what the user has entered into the form). When
+        using these in React, you may want to add extra functionality based on
+        the form data. When this happens, you’ll want to move state out of the
+        HTML element and into your React code. This pattern is called
+        “controlled component”.
+      </p>
+      <p>
+        So basically you create your form so that it’s always populated with
+        your React state. Then you set a custom event handler on the form
+        which updates the state (using setState()) in your React code. And
+        that will automatically trigger a re-render, which will update the
+        HTML element which will get populated with the new React state.
+      </p>
+      <p>
+        If you have multiple controlled components in the same scope, you can
+        just add an extra parameter to the event handler.
+      </p>
+      <p>
+        “Uncontrolled components” is another way to accomplish the same thing,
+        apparently, I haven’t looked into what they are.
+      </p>
+      <h1>
+        Page 10: Lifting State Up
+      </h1>
+      <p>
+        If you’ve got multiple components which use the same state, then
+        you’ll want to lift the state into the “lowest common ancestor” of all
+        the components, and then pass the state down to all the components in
+        question. If these child components need to update the state, you’ll
+        also have to pass down event handler callbacks which update the state
+        in the highest component.
+      </p>
+      <h1>
+        Page 11: Inheritance??? How do I structure code without inheritance?
+      </h1>
+      <p>
+        The docs cover two patterns.
+      </p>
+      <p>
+        Containment is when a component has children which are determined at
+        run-time. This could especially be true for components which are more
+        generic and reused in multiple different scenarios. In this case, you
+        can parameterize the “generic” components and pass the child
+        components in as props. The docs recommend that you use
+        <code>props.children</code> to do this.
+      </p>
+      <p>
+        Specialization is pretty simple. For example, let’s say WelcomeDialog
+        is a special case of Dialog. Then you can define WelcomeDialog as an
+        instance of Dialog with specific parameters (not sure I’m using
+        parameters in the right way here but it sounds better than
+        arguments/config).
+      </p>
+      <p>
+        The docs recommend never to use inheritance in React.
+      </p>
+      <h1>
+        Page 12: Steps to build something in React
+      </h1>
+      <p>
+        Steps:
+      </p>
+      <ul>
+        <li>
+          UI mock
+        </li>
+        <li>
+          Break the UI into a conceptual component hierarchy
+        </li>
+        <li>
+          Build a static version in React (no state, the only configuration
+          comes from read-only props which flow down the component hierarchy)
+        </li>
+        <li>
+          Identify the minimal state required, and where this state will exist
+          in the component hierarchy
+        </li>
+        <li>
+          Add “inverse data flow” which means allow sub-components to update
+          this state which exists higher up the hierarchy
+        </li>
+      </ul>
+      <p>
+        The comment which stuck with me the most was that state should exist
+        in a component which is higher than all the components which use that
+        state.
+      </p>
+      <h1>
+        Fin
+      </h1>
+      <p>
+        That’s it, go read some codebases that use React now.
+      </p>
+    </main>
+  </body>
+</html>

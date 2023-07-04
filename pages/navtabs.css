@@ -1,0 +1,39 @@
+/* Styles for the pages that are one hop from the navbar. */
+
+header {
+  padding-top: 1rem;
+  padding-bottom: 1.5rem;
+  font-size: 1.8rem;
+}
+
+nav {
+  display: flex;
+  justify-content: space-evenly;
+  width: 100%;
+  border-top: 0.1rem solid black;
+  border-bottom: 0.1rem solid black;
+  padding-top: 0.4rem;
+  padding-bottom: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.navbutton {
+  text-decoration: none;
+  color: darkgray;
+  font-size: 1.2rem;
+  min-width: 100px;
+  text-align: center;
+  padding-top: 0.1rem;
+  padding-bottom: 0.1rem;
+}
+
+.navbutton:hover {
+  color: 	#202020;
+}
+
+.selected-navbar-link {
+  color: black;
+  /* This allows for a bold effect without
+     changing the width of the text. */
+  text-shadow: 0.6px 0px 0px black;
+}
