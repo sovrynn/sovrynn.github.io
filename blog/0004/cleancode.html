@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../../global.css">
+    <link rel="stylesheet" href="../blogpost.css">
+    <link rel="icon" href="../../img/tabicon.png">
+    <title>Clean Code by Robert Martin</title>
+  </head>
+  <body>
+    <header>Clean Code by Robert Martin</header>
+    <div id="footer-of-header">
+      <span>By Junho (September 17, 2022)</span>
+      <a href="../../pages/software.html">back</a>
+    </div>
+    <main>
+      <p>
+        This is my first SWE-related blog post and it’s just a quick synopsis
+        of a really great book I read a few years back - “Clean Code”, by
+        Robert Martin. Meant to be more of a TLDR rather than an educational
+        piece as most of it is still pretty fresh in my mind, and there’s
+        diminishing returns and opportunity cost of time spent on this. I also
+        haven’t read all of the chapters in-depth - some of them are really
+        nitty or irrelevant.
+      </p>
+      <h1>
+        Chapter 1 - Intro
+      </h1>
+      <p>
+        This chapter is just an introduction/teaser. It talks about how clean
+        code matters - maybe not in the short-term, but definitely over the
+        long-term. Bad code compounds over time so that it becomes more and
+        more difficult to make changes. Reminds me of how some people in crypto
+        talk about how the US government is a system that becomes more and more
+        inefficient over time, because new laws and regulations are always
+        added but seldom removed. The result in both cases is compounding
+        inefficiency.
+      </p>
+      <h1>
+        Chapter 2 - Use Good Names!
+      </h1>
+      <p>
+        Super important and one of the easiest ways to make your code more
+        readable. Good names communicate intent, are specific and not vague,
+        and add context. With good names, you can read code almost like reading
+        normal writing.
+      </p>
+      <h1>
+        Chapter 3 - Functions
+      </h1>
+      <p>
+        Functions should:
+      </p>
+      <ul>
+        <li>
+            have good names
+        </li>
+        <li>
+            be short, do one specific thing, and exist at one level of
+            abstraction. You can hide multiple levels of abstraction by
+            refactoring code into more functions.
+        </li>
+        <li>
+            NOT have hidden side effects or dependencies
+        </li>
+      </ul>
+      <h1>
+        Chapter 4 - Comments
+      </h1>
+      <p>
+        Boilerplate comments are bad. Comments should only be used when they
+        can add meaningful information outside of what the code already
+        provides. For example, an important design decision or some relevant
+        detail that can’t be gleaned by just reading the code.
+      </p>
+      <h1>
+        Chapter 5 - Formatting
+      </h1>
+      <p>
+        Formatting matters! Makes the code more readable. There are
+        surprisingly many kinds of formatting, including:
+      </p>
+      <ul>
+        <li>
+          splitting code into “paragraphs”
+        </li>
+        <li>
+          having minimal vertical distance between first function calls and
+          implementations, or variable instantiations and their usage
+        </li>
+        <li>
+          ordering of different kinds of code such as fields vs functions
+        </li>
+      </ul>
+      <h1>
+        Chapter 6 - Objects and Data Structures
+      </h1>
+      <p>
+        Abstraction abstraction abstraction. Display the interface and hide the
+        implementation. Need I say more?
+      </p>
+      <h1>
+        Chapter 9 - Unit Tests
+      </h1>
+      <p>
+        Tests are important. In the short-term, tests might be the only
+        informational signal you have as to what your code actually does.
+        Either it passes the tests or it doesn’t.
+      </p>
+      <p>
+        The whole meme with TDD is to write tests before you write your code.
+        From my own personal experience I’ve done this and think it’s a good
+        way to go about things. Forces me to plan more before I write my code,
+        and also helps me find and fix bugs as I write it.
+      </p>
+      <h1>
+        Chapter 10 - Classes
+      </h1>
+      <p>
+        More beautiful advice in here about how classes should be small, and
+        have a single specific responsibility, just like functions!
+      </p>
+      <h1>
+        Chapter 17 - Smells and Heuristics
+      </h1>
+      <p>
+        A long laundry list of miscellaneous heuristics for judging/improving
+        code quality. Good read… I recommend going through all of them.
+      </p>
+      <h1>
+        My own closing thoughts
+      </h1>
+      <p>
+        I found that once I understood better what clean code is (and what it’s
+        not) I actually found it way easier to write clean code than bad code.
+        I think this is because ultimately coding is an expression of logic,
+        abstraction, and data flows and clean code is more discrete,
+        abstracted, and composable than spaghetti code.
+      </p>
+      <p>
+        I think writing (good) code is more about reading code than writing
+        code. I can draw lots of metaphors here:
+      </p>
+      <ul>
+        <li>
+          You learn how to become a good writer by reading, not by writing
+        </li>
+        <li>
+          You learn how to speak Spanish by listening, not by speaking
+        </li>
+      </ul>
+      <p>
+        In general, I think you can only enrich your informational output by
+        taking in more information as input.
+      </p>
+      <p>
+        That’s all for this synopsis. Have fun writing clean code folks!
+      </p>
+    </main>
+  </body>
+</html>

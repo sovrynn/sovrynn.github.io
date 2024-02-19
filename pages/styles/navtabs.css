@@ -1,0 +1,44 @@
+/* Styles for the pages that are one hop from the navbar. */
+
+header {
+  padding-top: 1rem;
+  padding-bottom: 1.5rem;
+  font-size: 1.8rem;
+}
+
+nav {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  border-top: 0.1rem solid black;
+  border-bottom: 0.1rem solid black;
+  /* 0.6 for the following two when the navtab is single row */
+  padding-top: 0.6rem;
+  padding-bottom: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.navbutton {
+  text-decoration: none;
+  color: darkgray;
+  font-size: 1.2rem;
+  /*Used to be 100px, made it 140px so that it wouldn't fit more than 5 on a line*/
+  min-width: 100px;
+  text-align: center;
+  padding-top: 0.1rem;
+  padding-bottom: 0.1rem;
+}
+
+/*There is a slight bug that this also applies to the selected-navbar-link.
+If you want the hover color to not override the selected-navbar-link color,
+you can add an unselected-navbar-link quality to the navbar.*/
+.navbutton:hover {
+  color: black;
+}
+
+.selected-navbar-link {
+  color: black;
+  /* The following allows for a bold effect without
+     changing the width of the text. */
+  text-shadow: 0.6px 0px 0px black;
+}
